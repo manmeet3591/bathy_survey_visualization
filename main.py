@@ -6,6 +6,11 @@ from geopy.geocoders import Nominatim
 from pyproj import CRS
 import utm
 
+import pandas as pd
+import numpy as np
+from scipy.spatial import Delaunay
+
+
 # ... (Your functions like `get_epsg` go here)
 
 def get_epsg(dam_name, country):
@@ -69,3 +74,32 @@ if uploaded_file is not None:
                             mapbox_style="carto-positron")
     
     st.plotly_chart(fig)
+
+#################
+
+# Triangulation
+    points = df[['X', 'Y']].to_numpy()
+    tri = Delaunay(points)
+
+    # Function to calculate volume of a triangular prism
+    def triangular_prism_volume(p1, p2, p3, h):
+        v1 = p2 - p1
+        v2 = p3 - p1
+        cross_product = np.cross(v1, v2)
+        area = np.linalg.norm(cross_product) / 2
+        volume = area * h / 3
+        return abs(volume)
+
+    # Compute volume
+    total_volume = 0
+    for simplex in tri.simplices:
+        p1, p2, p3 = points[simplex]
+        z1, z2, z3 = df.iloc[simplex]['Z']
+        avg_depth = (z1 + z2 + z3) / 3
+        volume = triangular_prism_volume(p1, p2, p3, avg_depth)
+        total_volume += volume
+    
+    # Show total volume
+    st.write("### Total Volume of Water in the Reservoir")
+    st.write(total_volume, 'cubic units')
+
