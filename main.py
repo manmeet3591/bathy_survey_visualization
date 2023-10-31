@@ -85,10 +85,10 @@ if uploaded_file is not None:
 
 # Triangulation
 # Renaming columns for easier reference
-    df.columns = ['X', 'Y', 'Z']
-    northern_hemisphere = True  # Example hemisphere
+    # df.columns = ['X', 'Y', 'Z']
+    # northern_hemisphere = True  # Example hemisphere
     
-    df['X'], df['Y'] = zip(*df.apply(lambda row: latlon_to_utm(row['Lat'], row['Lon'], utm_zone, northern_hemisphere), axis=1))
+    df['X'], df['Y'] = zip(*df.apply(lambda row: latlon_to_utm(row['lat'], row['lon'], utm_zone, northern_hemisphere), axis=1))
     
     points = df[['X', 'Y']].to_numpy()
     tri = Delaunay(points)
@@ -106,7 +106,7 @@ if uploaded_file is not None:
     total_volume = 0
     for simplex in tri.simplices:
         p1, p2, p3 = points[simplex]
-        z1, z2, z3 = df.iloc[simplex]['Z']
+        z1, z2, z3 = df.iloc[simplex]['bathy']
         avg_depth = (z1 + z2 + z3) / 3
         volume = triangular_prism_volume(p1, p2, p3, avg_depth)
         total_volume += volume
