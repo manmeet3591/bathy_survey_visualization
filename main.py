@@ -54,7 +54,7 @@ if uploaded_file is not None:
     dam_name = st.text_input("Enter Dam Name:", "Tenughat")
     country = st.text_input("Enter Country:", "India")
     
-    epsg, hemisphere, north_south = get_epsg(dam_name, country)
+    epsg, hemisphere, north_south, utm_zone = get_epsg(dam_name, country)
     zone = int(epsg[-2:])
     
     # Data preprocessing
