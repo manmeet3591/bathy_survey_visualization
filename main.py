@@ -8,6 +8,29 @@ import utm
 
 # ... (Your functions like `get_epsg` go here)
 
+def get_epsg(dam_name, country):
+  geolocator = Nominatim(user_agent='my_user_agent')
+  # get location in lat lon
+  loc = geolocator.geocode(dam_name  + ',' + country)
+  # get utm zone and utm letter from lat lon
+  x, y, utm_zone, letter = utm.from_latlon(loc.latitude, loc.longitude)
+  # predefined utm letters
+  # https://www.maptools.com/tutorials/grid_zone_details#:~:text=Each%20zone%20is%20divided%20into,spans%2012%C2%B0%20of%20latitude.
+  nothern_letters = ('N','P','Q','R','S','T','U','V','W','X')
+  southern_letters = ('M','L','K','J','H','G','F','E','D','C')
+  # check hemisphere using utm letter
+  if letter in nothern_letters:
+    hemisphere = 'nothern'
+    north_south = True
+  else:
+    hemisphere = 'southern'
+    north_south = False
+  # get crs info using utm zone and hemisphere
+  crs = CRS.from_dict({'proj': 'utm', 'zone': utm_zone, north_south: True})
+  # formatting epsg code into required fromat
+  epsg = crs.to_authority()[0] + ':' + crs.to_authority()[1]
+  return epsg, hemisphere, north_south
+
 st.title('Bathymetry Survey Visualization')
 
 # File uploader
