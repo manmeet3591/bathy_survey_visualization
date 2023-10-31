@@ -40,7 +40,7 @@ def get_epsg(dam_name, country):
   crs = CRS.from_dict({'proj': 'utm', 'zone': utm_zone, north_south: True})
   # formatting epsg code into required fromat
   epsg = crs.to_authority()[0] + ':' + crs.to_authority()[1]
-  return epsg, hemisphere, north_south
+  return epsg, hemisphere, north_south, utm_zone
 
 st.title('Bathymetry Survey Visualization')
 
