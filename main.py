@@ -78,6 +78,9 @@ if uploaded_file is not None:
 #################
 
 # Triangulation
+# Renaming columns for easier reference
+    df.columns = ['X', 'Y', 'Z']
+    
     points = df[['X', 'Y']].to_numpy()
     tri = Delaunay(points)
 
