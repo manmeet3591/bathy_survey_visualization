@@ -86,7 +86,7 @@ if uploaded_file is not None:
 # Triangulation
 # Renaming columns for easier reference
     # df.columns = ['X', 'Y', 'Z']
-    # northern_hemisphere = True  # Example hemisphere
+    northern_hemisphere = True  # Example hemisphere
     
     df['X'], df['Y'] = zip(*df.apply(lambda row: latlon_to_utm(row['lat'], row['lon'], utm_zone, northern_hemisphere), axis=1))
     
