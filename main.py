@@ -12,6 +12,12 @@ from scipy.spatial import Delaunay
 
 
 # ... (Your functions like `get_epsg` go here)
+import pyproj
+
+def latlon_to_utm(lat, lon, zone_number, northern):
+    proj_utm = pyproj.Proj(proj='utm', zone=zone_number, ellps='WGS84', south=not northern)
+    utm_x, utm_y = proj_utm(lon, lat)
+    return utm_x, utm_y
 
 def get_epsg(dam_name, country):
   geolocator = Nominatim(user_agent='my_user_agent')
@@ -80,6 +86,9 @@ if uploaded_file is not None:
 # Triangulation
 # Renaming columns for easier reference
     df.columns = ['X', 'Y', 'Z']
+    northern_hemisphere = True  # Example hemisphere
+    
+    df['X'], df['Y'] = zip(*df.apply(lambda row: latlon_to_utm(row['Lat'], row['Lon'], utm_zone, northern_hemisphere), axis=1))
     
     points = df[['X', 'Y']].to_numpy()
     tri = Delaunay(points)
